@@ -1,5 +1,5 @@
 {
-  "version": 7,
+  "version": 8,
   "updated": "2026-07-14",
   "_comment": "WinDroid compatibility database (seed). Data, not code: add an app by adding an entry here. 'match' identifies the app (exe filename, optional size/sha256, name substring, or steam app id); 'profile' is the known-good configuration. Empty/omitted profile fields inherit the container default. Ratings: playable | runnable | ingame | blocked-anticheat | broken | unknown.",
 
@@ -318,9 +318,9 @@
       "profile": { "box64Preset": "PERFORMANCE", "rating": "unknown", "notes": "Godot 4.3 engine/editor (x86_64). Oracle: REAL imports = dinput8 + dxgi ONLY; d3d11/d3d12/xinput1_3/1_4/9_1_0 are substring FALSE-POSITIVES (not imported). NO dxwrapper set on purpose (quiet-yak Trap-4): Godot 4.x defaults to its Vulkan RenderingDevice backend which talks to the Vulkan ICD DIRECTLY, not through D3D → dxvk would be INERT here; the real dependency is a working Vulkan ICD (Turnip/Adreno on device), not a dxwrapper. GL-compatibility fallback renderer selectable in-editor. Rated unknown pending on-device (arm64 HW; Vulkan ICD is the gate). Deps-justification: dinput8+dxgi builtin; real renderer path is device-Vulkan-dependent, no wrapper helps." }
     },
     {
-      "_note": "32-bit x86 PE (oracle arch=x86, machine 0x14c). Rated 'unknown' + arch-gated per lead ruling: box64 is x86_64-only; new-WoW64 wine can LOAD 32-bit PEs but whether box64 EXECUTES the 32-bit x86 instruction stream on arm64 is unverified on device (eager-wren owns the decider t-f4fb5f). Not a documented rating enum value exists for 'arch-gated', so schema-safe 'unknown' + notes. Flip to 'runnable' once the 32-bit-exec canary passes on S25.",
+      "_note": "32-bit x86 PE (oracle arch=x86, machine 0x14c). ARCH-GATE RESOLVED at build level (eager-wren t-f4fb5f / BOX64-32BIT-ARCH-GATE-VERDICT.md): box64-0.4.0 has BOX32 built-in (real symtab defs) + new-WoW64 wine → 32-bit x86 is supported, box86 NOT needed. Rated 'runnable' per lead policy (build-level YES); the ONE remaining owed item is the on-device confirmation (Greenshot Q6 canary), same device-pending hedge every runnable row carries.",
       "match": { "exe": "hxd.exe", "name_contains": "hxd" },
-      "profile": { "box64Preset": "STABILITY", "rating": "unknown", "notes": "HxD hex editor (32-bit x86, machine=0x14c). Oracle: 0 real DX/.NET/vcrun imports — pure Win32/GDI, would just-run on coverage alone. GATED on the open 32-bit-x86-execution question (box64 x86_64-only; new-WoW64 loads 32-bit PEs but device-side 32-bit exec unverified — see eager-wren t-f4fb5f). Deps-justification: 0 import gaps; the ONLY blocker is the arch-exec gate, not deps. Prime 32-bit-exec canary once the device confirms." }
+      "profile": { "box64Preset": "STABILITY", "rating": "runnable", "notes": "HxD hex editor (32-bit x86, machine=0x14c). Oracle: 0 real DX/.NET/vcrun imports — pure Win32/GDI, just-runs on coverage. 32-bit-x86 execution is supported at build level (box64 BOX32 built-in + new-WoW64 wine, box86 not needed — eager-wren t-f4fb5f). Deps-justification: 0 import gaps, no arch blocker. On-device confirm pending (Greenshot Q6 is the class-wide 32-bit confirmation run; arm64 HW)." }
     },
 
     {
@@ -333,9 +333,9 @@
       "profile": { "box64Preset": "STABILITY", "rating": "runnable", "notes": "Sysinternals Autoruns (x86_64). Gate-verified: 0 real imports, pure Win32/GDI, no .NET, no DX → dxvk default inert, no wrapper needed. Deps-justification: 0 import gaps. On-device unverified (arm64 HW pending)." }
     },
     {
-      "_note": "32-bit x86 PE (machine=0x14c) — SAME arch-gate as hxd (quiet-yak Trap-3). Schema-safe 'unknown' pending the box64 32-bit-exec decider (eager-wren t-f4fb5f); flips with the Greenshot device canary.",
+      "_note": "bright-yak (row owner) flags an artifact split: qBittorrent's INSTALLER is 32-bit NSIS but the INSTALLED qbittorrent.exe is x86_64 on modern releases. This name-match row targets the installed app. 32-bit x86 is now build-supported anyway (box64 BOX32 built-in + new-WoW64 — eager-wren t-f4fb5f), so either arch runs; not arch-gated. NOTE: merry-moth did NOT independently measure this exe's machine word (not in staged test-targets) — arch claim is bright-yak's, not first-hand oracle.",
       "match": { "exe": "qbittorrent.exe", "name_contains": "qbittorrent" },
-      "profile": { "box64Preset": "INTERMEDIATE", "rating": "unknown", "notes": "qBittorrent (32-bit x86, machine=0x14c). Qt Widgets UI, no D3D surface. Arch-gated: new-WoW64 loads 32-bit PEs but box64 32-bit-x86 execution is unverified on device (box64 is x86_64-only; see eager-wren t-f4fb5f). Deps-justification: no import gaps flagged by gate; the ONLY blocker is the 32-bit-exec gate, not deps. Flip to runnable once the 32-bit device canary (Greenshot) passes." }
+      "profile": { "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "qBittorrent (Qt Widgets UI, no D3D surface → dxvk default inert, no wrapper). Installed exe is x86_64 on modern builds (per bright-yak); 32-bit x86 is also build-supported (box64 BOX32 built-in + new-WoW64, box86 not needed — eager-wren t-f4fb5f), so no arch gate either way. Deps-justification: Qt/no import gaps flagged by gate. On-device unverified (arm64 HW pending)." }
     }
   ]
 }
