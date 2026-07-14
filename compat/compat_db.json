@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "updated": "2026-07-14",
   "_comment": "WinDroid compatibility database (seed). Data, not code: add an app by adding an entry here. 'match' identifies the app (exe filename, optional size/sha256, name substring, or steam app id); 'profile' is the known-good configuration. Empty/omitted profile fields inherit the container default. Ratings: playable | runnable | ingame | blocked-anticheat | broken | unknown.",
 
@@ -306,6 +306,36 @@
     {
       "match": { "exe": "dependencies.exe", "name_contains": "dependencies" },
       "profile": { "wineComponents": ["mono"], "box64Preset": "INTERMEDIATE", "rating": "unknown", "notes": "lucasg Dependencies (PE-import viewer); imports mscoree = .NET FRAMEWORK → wine-mono is the right lever, BUT it's a WPF app and wine-mono's WPF coverage is incomplete → may fail to render. Rated unknown pending on-device (arm64 HW). Same managed-app-qualifier class as screentogif/imageglass." }
+    },
+
+    {
+      "_note": "--- L1 FEEDER-BRIGHT batch-1: merry-moth-46 ran keen-wren pe_oracle.py first-hand on the staged exes (import tables below are REAL normal+delay imports, substring false-positives excluded). sha256 = lowercase hex, own PowerShell Get-FileHash, byte-matches bright-yak feed. ---",
+      "match": { "exe": "duckstation-qt-x64-releaseltcg.exe", "name_contains": "duckstation" },
+      "profile": { "box64Preset": "PERFORMANCE", "rating": "runnable", "notes": "DuckStation PS1 emulator (x86_64). Oracle: REAL imports = msvcp140/vcruntime140/vcruntime140_1 ONLY (vcrun, all wine-builtin); the d3d11/d3d12/dxgi/mf/mfplat/xaudio2 strings are substring FALSE-POSITIVES, not imported (renders via its own runtime-selected backend, D3D device created dynamically). dxvk default stays inert until a D3D device is made — no dxwrapper override needed. Deps-justification: 0 import gaps (vcrun builtin). On-device unverified (arm64 HW pending); Vulkan backend needs Turnip/Adreno." }
+    },
+    {
+      "match": { "exe": "godot_v4.3-stable_win64.exe", "name_contains": "godot" },
+      "profile": { "box64Preset": "PERFORMANCE", "rating": "unknown", "notes": "Godot 4.3 engine/editor (x86_64). Oracle: REAL imports = dinput8 + dxgi ONLY; d3d11/d3d12/xinput1_3/1_4/9_1_0 are substring FALSE-POSITIVES (not imported). NO dxwrapper set on purpose (quiet-yak Trap-4): Godot 4.x defaults to its Vulkan RenderingDevice backend which talks to the Vulkan ICD DIRECTLY, not through D3D → dxvk would be INERT here; the real dependency is a working Vulkan ICD (Turnip/Adreno on device), not a dxwrapper. GL-compatibility fallback renderer selectable in-editor. Rated unknown pending on-device (arm64 HW; Vulkan ICD is the gate). Deps-justification: dinput8+dxgi builtin; real renderer path is device-Vulkan-dependent, no wrapper helps." }
+    },
+    {
+      "_note": "32-bit x86 PE (oracle arch=x86, machine 0x14c). Rated 'unknown' + arch-gated per lead ruling: box64 is x86_64-only; new-WoW64 wine can LOAD 32-bit PEs but whether box64 EXECUTES the 32-bit x86 instruction stream on arm64 is unverified on device (eager-wren owns the decider t-f4fb5f). Not a documented rating enum value exists for 'arch-gated', so schema-safe 'unknown' + notes. Flip to 'runnable' once the 32-bit-exec canary passes on S25.",
+      "match": { "exe": "hxd.exe", "name_contains": "hxd" },
+      "profile": { "box64Preset": "STABILITY", "rating": "unknown", "notes": "HxD hex editor (32-bit x86, machine=0x14c). Oracle: 0 real DX/.NET/vcrun imports — pure Win32/GDI, would just-run on coverage alone. GATED on the open 32-bit-x86-execution question (box64 x86_64-only; new-WoW64 loads 32-bit PEs but device-side 32-bit exec unverified — see eager-wren t-f4fb5f). Deps-justification: 0 import gaps; the ONLY blocker is the arch-exec gate, not deps. Prime 32-bit-exec canary once the device confirms." }
+    },
+
+    {
+      "_note": "--- L1 FEEDER-BRIGHT batch-2: bright-yak PE-facts → quiet-yak VERIFY-GATE GREEN (13:59) → applied. Sysinternals x86_64 single-exes. ---",
+      "match": { "exe": "procexp64.exe", "name_contains": "process explorer" },
+      "profile": { "box64Preset": "STABILITY", "rating": "runnable", "notes": "Sysinternals Process Explorer (x86_64). Gate-verified: 0 real imports, pure Win32/GDI, no .NET, no DX → dxvk default inert, no wrapper needed. Deps-justification: 0 import gaps. On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "match": { "exe": "autoruns64.exe", "name_contains": "autoruns" },
+      "profile": { "box64Preset": "STABILITY", "rating": "runnable", "notes": "Sysinternals Autoruns (x86_64). Gate-verified: 0 real imports, pure Win32/GDI, no .NET, no DX → dxvk default inert, no wrapper needed. Deps-justification: 0 import gaps. On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "_note": "32-bit x86 PE (machine=0x14c) — SAME arch-gate as hxd (quiet-yak Trap-3). Schema-safe 'unknown' pending the box64 32-bit-exec decider (eager-wren t-f4fb5f); flips with the Greenshot device canary.",
+      "match": { "exe": "qbittorrent.exe", "name_contains": "qbittorrent" },
+      "profile": { "box64Preset": "INTERMEDIATE", "rating": "unknown", "notes": "qBittorrent (32-bit x86, machine=0x14c). Qt Widgets UI, no D3D surface. Arch-gated: new-WoW64 loads 32-bit PEs but box64 32-bit-x86 execution is unverified on device (box64 is x86_64-only; see eager-wren t-f4fb5f). Deps-justification: no import gaps flagged by gate; the ONLY blocker is the 32-bit-exec gate, not deps. Flip to runnable once the 32-bit device canary (Greenshot) passes." }
     }
   ]
 }
