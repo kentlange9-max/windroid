@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "updated": "2026-07-14",
   "_comment": "WinDroid compatibility database (seed). Data, not code: add an app by adding an entry here. 'match' identifies the app (exe filename, optional size/sha256, name substring, or steam app id); 'profile' is the known-good configuration. Empty/omitted profile fields inherit the container default. Ratings: playable | runnable | ingame | blocked-anticheat | broken | unknown.",
 
@@ -238,7 +238,7 @@
     },
     {
       "match": { "exe": "imageglass.exe", "name_contains": "imageglass" },
-      "profile": { "wineComponents": ["mono"], "dxwrapper": "wined3d", "box64Preset": "STABILITY", "rating": "unknown", "notes": "BROAD name-match FALLBACK (the exact 8.12.4.30 build is sha256-pinned above -> runnable). VERSION-CRITICAL (swift-wolf-fb .NET rule / lead 10:26): ImageGlass <=8.x = .NET Framework 4.x -> wine-mono runs it (runnable). ImageGlass >=9.x = .NET 7/8 modern (hostfxr/coreclr) -> wine-mono does NOT implement it -> needs the real .NET Desktop Runtime, unsupported (broken). Match-by-name can't tell versions apart, so rated 'unknown'; a future 9.x exe would get its own sha256 pin. mono kept (helps 8.x, inert for 9.x which fails regardless)." }
+      "profile": { "box64Preset": "STABILITY", "rating": "unknown", "notes": "BROAD name-match FALLBACK — intentionally FLAVOR-NEUTRAL (no mono, no dxwrapper) per swift-wolf-fb .NET rule: runtime flavor is a per-VERSION fact carried by the sha256 pins, not a per-NAME fact. ImageGlass <=8.x = .NET Framework (mono-runnable, pinned above @8.12.4.30); >=9.x = modern .NET (needs Desktop Runtime, unsupported → its own future sha256 pin). Asserting mono here would be a false-GREEN for 9.x users. Non-pinned 8.x builds still get mono via Wine's AddonsURL auto-install (Framework detected at runtime), so neutral fallback loses nothing. Rated 'unknown' since name-match can't know the version." }
     },
     {
       "_note": "--- FRONTIER-A Tier-2: DirectX -> DXVK 2.4.1 / VKD3D / wincomponents ---",
