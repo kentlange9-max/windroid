@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "updated": "2026-07-14",
   "_comment": "WinDroid compatibility database (seed). Data, not code: add an app by adding an entry here. 'match' identifies the app (exe filename, optional size/sha256, name substring, or steam app id); 'profile' is the known-good configuration. Empty/omitted profile fields inherit the container default. Ratings: playable | runnable | ingame | blocked-anticheat | broken | unknown.",
 
@@ -232,8 +232,13 @@
       "profile": { "wineComponents": ["mono"], "dxwrapper": "wined3d", "box64Preset": "STABILITY", "rating": "runnable", "notes": ".NET 4.x WinForms + crypto - the best wine-mono smoke (no DX). WineHQ Gold with Mono. On-device unverified (arm64 HW pending)." }
     },
     {
+      "_note": "sha256-PINNED exact build: ImageGlass 8.12.4.30 x64 (last .NET-Framework 8.x line). keen-wren oracle: CLR-header present = .NET Framework 4.x -> wine-mono runs it; 0 real DX imports (dxvk-default inert). Precise row wins (SCORE_SHA256=5) over the name-match fallback below.",
+      "match": { "exe": "imageglass.exe", "sha256": "2640a157febc66a7f94c18378aa5da1a4330b5cd2ce0a66a96ea169dc987a60b" },
+      "profile": { "wineComponents": ["mono"], "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "ImageGlass 8.12.4.30 x64 (github.com/d2phap/ImageGlass, ImageGlass_8.12.4.30_x64.zip) = the LAST .NET Framework 4.x release before v9 went modern .NET. Oracle-verified Framework (CLR header present, 'Mono/.Net assembly') -> wine-mono 10.1.0 runs it. 0 real DX imports (dxvk default inert). runnable per WineHQ mono consensus; on-device unverified (arm64 HW pending)." }
+    },
+    {
       "match": { "exe": "imageglass.exe", "name_contains": "imageglass" },
-      "profile": { "wineComponents": ["mono"], "dxwrapper": "wined3d", "box64Preset": "STABILITY", "rating": "unknown", "notes": "VERSION-CRITICAL (swift-wolf-fb .NET rule / lead 10:26): ImageGlass <=8.x = .NET Framework 4.x -> wine-mono runs it (runnable). ImageGlass >=9.x = .NET 7/8 modern (hostfxr/coreclr) -> wine-mono does NOT implement it -> needs the real .NET Desktop Runtime, unsupported (broken). Match-by-name can't tell versions apart, so rated 'unknown'; pin to a specific 8.x portable release for a mono 'just works', or use a self-contained 9.x build. mono kept (helps 8.x, inert for 9.x which fails regardless)." }
+      "profile": { "wineComponents": ["mono"], "dxwrapper": "wined3d", "box64Preset": "STABILITY", "rating": "unknown", "notes": "BROAD name-match FALLBACK (the exact 8.12.4.30 build is sha256-pinned above -> runnable). VERSION-CRITICAL (swift-wolf-fb .NET rule / lead 10:26): ImageGlass <=8.x = .NET Framework 4.x -> wine-mono runs it (runnable). ImageGlass >=9.x = .NET 7/8 modern (hostfxr/coreclr) -> wine-mono does NOT implement it -> needs the real .NET Desktop Runtime, unsupported (broken). Match-by-name can't tell versions apart, so rated 'unknown'; a future 9.x exe would get its own sha256 pin. mono kept (helps 8.x, inert for 9.x which fails regardless)." }
     },
     {
       "_note": "--- FRONTIER-A Tier-2: DirectX -> DXVK 2.4.1 / VKD3D / wincomponents ---",
