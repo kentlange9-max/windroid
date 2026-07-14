@@ -1,0 +1,287 @@
+{
+  "version": 2,
+  "updated": "2026-07-14",
+  "_comment": "WinDroid compatibility database (seed). Data, not code: add an app by adding an entry here. 'match' identifies the app (exe filename, optional size/sha256, name substring, or steam app id); 'profile' is the known-good configuration. Empty/omitted profile fields inherit the container default. Ratings: playable | runnable | ingame | blocked-anticheat | broken | unknown.",
+
+  "apps": [
+    {
+      "_note": "Migrated from Win32AppWorkarounds: esync breaks these titles.",
+      "match": { "exe": "sonicgenerations.exe", "name_contains": "sonic generations" },
+      "profile": { "envVars": "WINEESYNC=0", "rating": "playable", "notes": "Disable esync (fixes hangs/crashes)." }
+    },
+    {
+      "match": { "steamAppId": "71340" },
+      "profile": { "envVars": "WINEESYNC=0", "rating": "playable", "notes": "Sonic Generations: disable esync." }
+    },
+    {
+      "match": { "exe": "valkyria.exe", "name_contains": "valkyria chronicles" },
+      "profile": { "envVars": "WINEESYNC=0", "rating": "playable", "notes": "Disable esync." }
+    },
+    {
+      "match": { "steamAppId": "294860" },
+      "profile": { "envVars": "WINEESYNC=0", "rating": "playable", "notes": "Valkyria Chronicles: disable esync." }
+    },
+    {
+      "_note": "Blacklist needs the WoW64 affinity mask, which is computed at runtime from the container CPU list — kept as a code-side window behavior.",
+      "match": { "exe": "blacklist_game.exe" },
+      "profile": { "windowBehavior": "override_affinity_wow64", "rating": "runnable", "notes": "Splinter Cell: Blacklist — forces 32-bit affinity mask." }
+    },
+    {
+      "match": { "exe": "blacklist_dx11_game.exe" },
+      "profile": { "windowBehavior": "override_affinity_wow64", "rating": "runnable", "notes": "Splinter Cell: Blacklist (DX11) — forces 32-bit affinity mask." }
+    },
+    {
+      "match": { "exe": "fate.exe" },
+      "profile": { "screenSize": "1024x768", "rating": "playable", "notes": "Fixed-resolution fix." }
+    },
+    {
+      "match": { "exe": "psychotoxic.exe" },
+      "profile": { "screenSize": "1024x768", "rating": "runnable", "notes": "Fixed-resolution fix." }
+    },
+    {
+      "_note": "FFXII TZA needs screen size + 4px, computed at runtime — code-side behavior.",
+      "match": { "exe": "ffxii_tza.exe", "name_contains": "final fantasy xii" },
+      "profile": { "windowBehavior": "screen_plus_4", "rating": "playable", "notes": "FFXII The Zodiac Age — DX11 (DXVK); +4px desktop workaround." }
+    },
+    {
+      "_note": "Chrono Cross launcher needs a transparent window then minimize/restore — code-side behavior.",
+      "match": { "exe": "chronocross_launcher.exe" },
+      "profile": { "windowBehavior": "transparent_minimize_restore", "rating": "playable", "notes": "Launcher visibility workaround." }
+    },
+    {
+      "match": { "exe": "dino.exe" },
+      "profile": { "wincomponents": "directshow=1", "rating": "runnable", "notes": "Needs DirectShow for intro video." }
+    },
+    {
+      "match": { "exe": "dino2.exe" },
+      "profile": { "wincomponents": "directshow=1", "rating": "runnable", "notes": "Needs DirectShow for intro video." }
+    },
+    {
+      "match": { "exe": "bof4.exe", "name_contains": "breath of fire" },
+      "profile": { "wincomponents": "directshow=1", "rating": "runnable", "notes": "Breath of Fire IV — DirectShow for FMVs." }
+    },
+    {
+      "match": { "exe": "discipl2.exe" },
+      "profile": { "dxwrapper": "wined3d", "rating": "runnable", "notes": "Disciples II — WineD3D is more stable than DXVK here." }
+    },
+
+    {
+      "_note": "--- Modern AAA (DX12 → VKD3D) ---",
+      "match": { "exe": "eldenring.exe", "name_contains": "elden ring" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "PERFORMANCE", "envVars": "DXVK_ASYNC=1", "rating": "ingame", "notes": "DX12 via VKD3D (always active); heavy. Playable on 8 Elite. Anti-cheat is EAC (offline/seamless-coop mods vary)." }
+    },
+    {
+      "match": { "exe": "start_protected_game.exe", "name_contains": "elden ring" },
+      "profile": { "windowBehavior": "", "rating": "blocked-anticheat", "notes": "EAC launcher wrapper — launch eldenring.exe directly for offline." }
+    },
+    {
+      "match": { "exe": "sekiro.exe", "name_contains": "sekiro" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "PERFORMANCE", "rating": "ingame", "notes": "DX11 (DXVK)." }
+    },
+    {
+      "match": { "exe": "witcher3.exe", "name_contains": "witcher 3" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "PERFORMANCE", "rating": "ingame", "notes": "Use the DX11 (classic) build; DX12 next-gen is heavier — try VKD3D if using next-gen." }
+    },
+    {
+      "match": { "exe": "cyberpunk2077.exe", "name_contains": "cyberpunk 2077" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "PERFORMANCE", "rating": "ingame", "notes": "DX12 via VKD3D (always active); very demanding. Lowest settings recommended." }
+    },
+    {
+      "match": { "exe": "gtav.exe", "name_contains": "grand theft auto v" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "PERFORMANCE", "rating": "ingame", "notes": "DX11 (DXVK). Story mode; online uses BattlEye." }
+    },
+    {
+      "match": { "exe": "re8.exe", "name_contains": "resident evil village" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "PERFORMANCE", "rating": "ingame", "notes": "DX12 via VKD3D (always active)." }
+    },
+    {
+      "match": { "exe": "nier automata.exe", "name_contains": "nier automata" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "PERFORMANCE", "rating": "playable", "notes": "DX11 (DXVK). FAR mod optional." }
+    },
+    {
+      "match": { "exe": "dmc5.exe", "name_contains": "devil may cry 5" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "PERFORMANCE", "rating": "ingame", "notes": "DX12 via VKD3D (always active); the DX11 build also works." }
+    },
+
+    {
+      "_note": "--- Unity / indie (DXVK) ---",
+      "match": { "exe": "hollow_knight.exe", "name_contains": "hollow knight" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "INTERMEDIATE", "rating": "playable", "notes": "Unity, DX11 (DXVK). Runs great." }
+    },
+    {
+      "match": { "exe": "cuphead.exe", "name_contains": "cuphead" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "INTERMEDIATE", "rating": "playable", "notes": "Unity." }
+    },
+    {
+      "match": { "exe": "celeste.exe", "name_contains": "celeste" },
+      "profile": { "dxwrapper": "dxvk", "wineComponents": ["mono"], "box64Preset": "INTERMEDIATE", "rating": "playable", "notes": "FNA/.NET — ensure Wine-Mono." }
+    },
+    {
+      "match": { "exe": "stardewvalley.exe", "name_contains": "stardew valley" },
+      "profile": { "dxwrapper": "dxvk", "wineComponents": ["mono"], "box64Preset": "INTERMEDIATE", "rating": "playable", "notes": "XNA/.NET — ensure Wine-Mono." }
+    },
+    {
+      "match": { "exe": "undertale.exe", "name_contains": "undertale" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "CONSERVATIVE", "rating": "playable", "notes": "GameMaker." }
+    },
+    {
+      "match": { "exe": "terraria.exe", "name_contains": "terraria" },
+      "profile": { "dxwrapper": "dxvk", "wineComponents": ["mono"], "box64Preset": "INTERMEDIATE", "rating": "playable", "notes": "Current build (1.4+) = FNA bundled in-folder (self-contained .NET Framework) -> wine-mono OK. Pre-1.4 XNA-4.0 builds need the separate XNA redist (NOT bundled by wine-mono). Managed deps are CLR-resolved at runtime (invisible to PE-import analysis)." }
+    },
+    {
+      "match": { "exe": "vampire_survivors.exe", "name_contains": "vampire survivors" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "INTERMEDIATE", "rating": "playable", "notes": "Electron/HTML5 wrapper." }
+    },
+
+    {
+      "_note": "--- Retro / legacy DirectX ---",
+      "match": { "exe": "morrowind.exe", "name_contains": "morrowind" },
+      "profile": { "dxwrapper": "wined3d", "box64Preset": "CONSERVATIVE", "rating": "playable", "notes": "DX8 era; WineD3D or d8vk." }
+    },
+    {
+      "match": { "exe": "diablo.exe", "name_contains": "diablo" },
+      "profile": { "dxwrapper": "wined3d", "dxwrapperConfig": "ddrawWrapper=cnc-ddraw|", "box64Preset": "STABILITY", "rating": "playable", "notes": "Classic DirectDraw — CNC-DDraw for scaling/compat." }
+    },
+    {
+      "match": { "exe": "starcraft.exe", "name_contains": "starcraft" },
+      "profile": { "dxwrapper": "wined3d", "dxwrapperConfig": "ddrawWrapper=cnc-ddraw|", "box64Preset": "STABILITY", "rating": "playable", "notes": "DirectDraw (CNC-DDraw)." }
+    },
+    {
+      "match": { "exe": "age2_x1.exe", "name_contains": "age of empires ii" },
+      "profile": { "dxwrapper": "wined3d", "dxwrapperConfig": "ddrawWrapper=cnc-ddraw|", "box64Preset": "STABILITY", "rating": "playable", "notes": "AoE II (original) — DirectDraw." }
+    },
+
+    {
+      "_note": "--- Productivity / .NET / runtimes ---",
+      "match": { "exe": "notepad++.exe", "name_contains": "notepad++" },
+      "profile": { "dxwrapper": "wined3d", "box64Preset": "STABILITY", "rating": "playable", "notes": "GDI app; no 3D needed." }
+    },
+    {
+      "match": { "exe": "winrar.exe", "name_contains": "winrar" },
+      "profile": { "dxwrapper": "wined3d", "box64Preset": "STABILITY", "rating": "playable", "notes": "Utility." }
+    },
+    {
+      "match": { "exe": "7zfm.exe", "name_contains": "7-zip" },
+      "profile": { "dxwrapper": "wined3d", "box64Preset": "STABILITY", "rating": "playable", "notes": "Utility." }
+    },
+    {
+      "match": { "exe": "foobar2000.exe", "name_contains": "foobar2000" },
+      "profile": { "dxwrapper": "wined3d", "wincomponents": "directshow=1", "box64Preset": "STABILITY", "rating": "playable", "notes": "GDI audio player. directshow=1 kept per lead 10:15 (media-app first-try insurance; foobar ships own decoders so it's belt-and-suspenders, harmless). wined3d = Vulkan-free." }
+    },
+
+    {
+      "_note": "--- Kernel anti-cheat: cannot work without ring-0. Clearly flagged. ---",
+      "match": { "exe": "valorant.exe", "name_contains": "valorant" },
+      "profile": { "rating": "blocked-anticheat", "notes": "Riot Vanguard is a kernel driver — impossible under Wine. No workaround exists." }
+    },
+    {
+      "match": { "exe": "riotclientservices.exe", "name_contains": "riot client" },
+      "profile": { "rating": "blocked-anticheat", "notes": "Riot Vanguard (kernel) — blocked." }
+    },
+    {
+      "match": { "exe": "fortniteclient-win64-shipping.exe", "name_contains": "fortnite" },
+      "profile": { "rating": "blocked-anticheat", "notes": "Easy Anti-Cheat in kernel mode for Fortnite — blocked on Android." }
+    },
+    {
+      "match": { "exe": "r5apex.exe", "name_contains": "apex legends" },
+      "profile": { "rating": "blocked-anticheat", "notes": "EAC kernel — blocked." }
+    },
+    {
+      "match": { "exe": "destiny2.exe", "name_contains": "destiny 2" },
+      "profile": { "rating": "blocked-anticheat", "notes": "BattlEye kernel — blocked." }
+    },
+    {
+      "match": { "exe": "pubg.exe", "name_contains": "playerunknown" },
+      "profile": { "rating": "blocked-anticheat", "notes": "BattlEye kernel — blocked." }
+    },
+
+    {
+      "_note": "--- UWP / Microsoft Store apps: not runnable under Wine (no MSIX/Store/WinRT stack) ---",
+      "match": { "exe": "xboxpcapp.exe", "name_contains": "xbox" },
+      "profile": { "rating": "broken", "notes": "The Xbox app for Windows is a UWP/MSIX Microsoft Store app; it needs the Windows Store deployment stack, Gaming Services and WinRT, which Wine does not implement. Not runnable. Install games directly (their own launchers/exes) instead." }
+    },
+    {
+      "match": { "exe": "xboxapp.exe", "name_contains": "xbox console companion" },
+      "profile": { "rating": "broken", "notes": "Xbox Console Companion needs Xbox Live + WinRT; not runnable under Wine." }
+    },
+    {
+      "match": { "exe": "gamingservices.exe", "name_contains": "gaming services" },
+      "profile": { "rating": "broken", "notes": "Microsoft Gaming Services is a UWP/system component; not runnable under Wine." }
+    },
+    {
+      "match": { "exe": "winstore.app.exe", "name_contains": "microsoft store" },
+      "profile": { "rating": "broken", "notes": "The Microsoft Store is a pure UWP/WinRT app tied to Windows' AppX deployment service and licensing; Wine has no UWP runtime, so it cannot run. Download apps' standalone installers instead." }
+    },
+    {
+      "match": { "exe": "wsappx.exe", "name_contains": "wsappx" },
+      "profile": { "rating": "broken", "notes": "AppX Deployment Service — a Windows UWP subsystem, not present under Wine." }
+    },
+
+    {
+      "_note": "--- FRONTIER-A Tier-0: GDI/USER single-exes, zero graphics config (merry-moth staged, eager-wren reviewed) ---",
+      "match": { "exe": "sumatrapdf.exe", "name_contains": "sumatra" },
+      "profile": { "dxwrapper": "wined3d", "box64Preset": "STABILITY", "rating": "playable", "notes": "Pure Win32/GDI PDF reader; no 3D. WineHQ Platinum. WinDroid on-device unverified (pending arm64 HW)." }
+    },
+    {
+      "match": { "exe": "putty.exe", "name_contains": "putty" },
+      "profile": { "dxwrapper": "wined3d", "box64Preset": "STABILITY", "rating": "playable", "notes": "GDI + winsock SSH client. WineHQ Platinum. On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "_note": "--- FRONTIER-A Tier-1: .NET Framework -> wine-mono 10.1.0 proof ---",
+      "match": { "exe": "keepass.exe", "name_contains": "keepass" },
+      "profile": { "wineComponents": ["mono"], "dxwrapper": "wined3d", "box64Preset": "STABILITY", "rating": "runnable", "notes": ".NET 4.x WinForms + crypto - the best wine-mono smoke (no DX). WineHQ Gold with Mono. On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "match": { "exe": "imageglass.exe", "name_contains": "imageglass" },
+      "profile": { "wineComponents": ["mono"], "dxwrapper": "wined3d", "box64Preset": "STABILITY", "rating": "unknown", "notes": "VERSION-CRITICAL (swift-wolf-fb .NET rule / lead 10:26): ImageGlass <=8.x = .NET Framework 4.x -> wine-mono runs it (runnable). ImageGlass >=9.x = .NET 7/8 modern (hostfxr/coreclr) -> wine-mono does NOT implement it -> needs the real .NET Desktop Runtime, unsupported (broken). Match-by-name can't tell versions apart, so rated 'unknown'; pin to a specific 8.x portable release for a mono 'just works', or use a self-contained 9.x build. mono kept (helps 8.x, inert for 9.x which fails regardless)." }
+    },
+    {
+      "_note": "--- FRONTIER-A Tier-2: DirectX -> DXVK 2.4.1 / VKD3D / wincomponents ---",
+      "match": { "exe": "mgba.exe", "name_contains": "mgba" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "D3D11 (DXVK) GBA emulator; clean small swap-chain test. On-device unverified (arm64 HW pending; DXVK needs working Vulkan - 8 Elite/Turnip ideal, AVD Vulkan is the vortek gate)." }
+    },
+    {
+      "match": { "exe": "openttd.exe", "name_contains": "openttd" },
+      "profile": { "dxwrapper": "wined3d", "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "OpenGL/DirectDraw; low-spec, self-contained. WineD3D safe (no Vulkan dep). Good sustained-render test. On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "match": { "exe": "dosbox-x.exe", "name_contains": "dosbox-x" },
+      "profile": { "dxwrapper": "wined3d", "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "Legacy DirectDraw + directsound. directsound is default-on (DEFAULT_WINCOMPONENTS), so no wincomponents override needed. On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "match": { "exe": "supertuxkart.exe", "name_contains": "supertuxkart" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "PERFORMANCE", "rating": "runnable", "notes": "Heavier OpenGL/Vulkan 3D; validates the game-render path end-to-end (8 Elite + Turnip). On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "match": { "exe": "example_win32_directx11.exe", "name_contains": "imgui" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "Minimal Dear ImGui D3D11 demo - isolates DXVK bring-up from game complexity. d3dcompiler_47 ships in the direct3d wincomponent (default-on), so no wincomponents override needed. On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "_note": "--- FRONTIER-A Tier-3: media codecs (wincomponents) ---",
+      "match": { "exe": "vlc.exe", "name_contains": "vlc" },
+      "profile": { "dxwrapper": "wined3d", "wincomponents": "directshow=1", "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "Qt UI + media codecs. Only directshow needs toggling (default=0); wmdecoder + directsound are already default-on. Heavier; drive after Tier 0-2. On-device unverified (arm64 HW pending)." }
+    },
+
+    {
+      "_note": "--- L1: witty-hawk L2 battery, PE-imports parsed + keen-wren oracle-verified (grounded, not guessed) ---",
+      "match": { "exe": "crispy-doom.exe", "name_contains": "crispy" },
+      "profile": { "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "SDL2 source port; imports all wine-builtin, 0 real DX (SDL2/SDL2_mixer/net + libpng/zlib/fluidsynth bundled in-zip). Needs a DOOM WAD (data, not a DLL). dxvk default is inert (no D3D). On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "match": { "exe": "ppsspp.exe", "name_contains": "ppsspp" },
+      "profile": { "box64Preset": "PERFORMANCE", "rating": "runnable", "notes": "PSP emulator; static imports opengl32/dinput8/hid/winmm/ws2_32/winhttp — all builtin, 0 gaps. Defaults to Direct3D11 on Windows -> the container-default dxvk serves it (GL/Vulkan also selectable in-app; Vulkan backend needs Turnip on device). No dxwrapper override needed. On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "match": { "exe": "winmergeu.exe", "name_contains": "winmerge" },
+      "profile": { "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "Diff/merge tool; 13 imports all wine-builtin (pure GDI + gdiplus), 0 gaps (VERIFY-B JUST-RUNS). No DX, no .NET. dxvk default inert. On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "match": { "exe": "greenshot.exe", "name_contains": "greenshot" },
+      "profile": { "wineComponents": ["mono"], "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "Screenshot tool; imports mscoree.dll = .NET FRAMEWORK -> wine-mono 10.1.0 implements it (VERIFY-B JUST-RUNS*). Contrast screentogif (modern .NET, broken). On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "match": { "exe": "screentogif.exe", "name_contains": "screentogif" },
+      "profile": { "rating": "broken", "notes": "MODERN .NET (Core/5+; imports hostfxr/hostpolicy, NO mscoree) → bundled wine-mono does NOT implement it; needs the real .NET Desktop Runtime (unsupported under Wine-Mono). WPF-on-Wine adds further risk. Not runnable as-is; not a .NET-Framework/mono case. (PE parsed by witty-hawk L2.)" }
+    }
+  ]
+}
