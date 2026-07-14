@@ -1,5 +1,5 @@
 {
-  "version": 9,
+  "version": 10,
   "updated": "2026-07-14",
   "_comment": "WinDroid compatibility database (seed). Data, not code: add an app by adding an entry here. 'match' identifies the app (exe filename, optional size/sha256, name substring, or steam app id); 'profile' is the known-good configuration. Empty/omitted profile fields inherit the container default. Ratings: playable | runnable | ingame | blocked-anticheat | broken | unknown.",
 
@@ -353,6 +353,12 @@
       "_note": "HandBrake MODERN .NET but FRAMEWORK-DEPENDENT (C8 = needs provisioning): net8.0 runtimeconfig uses 'framework' (singular, Microsoft.WindowsDesktop.App 8.0.0) with NO bundled coreclr → needs the real .NET 8 Desktop Runtime in-prefix, which wine-mono does NOT provide. mscoree in the binary is a SUBSTRING FALSE-POSITIVE (0 real imports), so tagging [mono] would be a false-GREEN — the exact ScreenToGif-class trap. UNBLOCKS when bold-lynx's .NET Desktop Runtime provisioning (dotnetdesktop8 verb, t-3f7148) lands.",
       "match": { "exe": "handbrake.exe", "name_contains": "handbrake", "sha256": "d346e161f2cbaccccae0a2861c4e9baf888d6aa1bfcfba4ba6ded922a65f8c75" },
       "profile": { "box64Preset": "INTERMEDIATE", "rating": "unknown", "notes": "HandBrake video transcoder (x86_64, modern .NET net8.0). FRAMEWORK-DEPENDENT (runtimeconfig 'framework' singular = Microsoft.WindowsDesktop.App 8.0.0, no bundled coreclr) → needs the .NET 8 Desktop Runtime provisioned in-prefix; wine-mono does NOT implement CoreCLR so it will NOT launch under mono. Do NOT set wineComponents=[mono] (mscoree is a substring false-positive, not a real import — ScreenToGif-class trap). Deps-justification: modern .NET fwk-dep, unsupported until .NET Desktop Runtime provisioning lands (bold-lynx t-3f7148 / dotnetdesktop8 verb). Rated unknown (not broken) — flips to runnable when provisioning ships." }
+    },
+
+    {
+      "_note": "--- L1 DX-LADDER canary (bright-yak t-8d4063 → quiet-yak VERIFY-GATE GREEN 14:38 + signature-correction 14:40): decisive import-time DX11 device canary for keen-hawk's device queue, distinct from Snes9x(DX9). sha256 verified first-hand (merry-moth Get-FileHash = 65b50a21…12e5, 332272B, machine=0x8664). NOT a duplicate of example_win32_directx11.exe@261 (different exe + match-key). ---",
+      "match": { "exe": "pos_d3d11.exe", "sha256": "65b50a2183e80ac22c7e3e43859a0d0cecae1d8014f12db25479365d185912e5" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "INTERMEDIATE", "envVars": "DXVK_LOG_LEVEL=info", "rating": "unknown", "notes": "Static-import DX11 canary (x86_64). Oracle: REAL static imports d3d11.dll+dxgi.dll (device+DXGI factory created at startup, NOT substring). This is a DEVICE-CREATE PROBE: pos_d3d11.c calls D3D11CreateDevice(HARDWARE)+CreateDXGIFactory then RETURNS — NO swapchain, NO window, NO frame present (quiet-yak 14:40 signature-correction). Expected GREEN sig = D3D11CreateDevice succeeds → DXVK inits a Vulkan device: grep DXVK_LOG_LEVEL=info output for 'DXVK: Vulkan'/'DxvkDevice'/'D3D_FEATURE_LEVEL' + clean exit 0, no err:vulkan/VK_ERROR. DXVK_LOG_LEVEL=info is REQUIRED or the create-success signal is invisible. Proves the D3D11→dxvk→Vulkan→Adreno device path on-device. Deps-justification: real d3d11+dxgi imports, dxvk serves both; rating unknown pending the on-device create-success capture." }
     }
   ]
 }
