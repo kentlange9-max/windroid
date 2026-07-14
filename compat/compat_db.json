@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "updated": "2026-07-14",
   "_comment": "WinDroid compatibility database (seed). Data, not code: add an app by adding an entry here. 'match' identifies the app (exe filename, optional size/sha256, name substring, or steam app id); 'profile' is the known-good configuration. Empty/omitted profile fields inherit the container default. Ratings: playable | runnable | ingame | blocked-anticheat | broken | unknown.",
 
@@ -336,6 +336,23 @@
       "_note": "bright-yak (row owner) flags an artifact split: qBittorrent's INSTALLER is 32-bit NSIS but the INSTALLED qbittorrent.exe is x86_64 on modern releases. This name-match row targets the installed app. 32-bit x86 is now build-supported anyway (box64 BOX32 built-in + new-WoW64 — eager-wren t-f4fb5f), so either arch runs; not arch-gated. NOTE: merry-moth did NOT independently measure this exe's machine word (not in staged test-targets) — arch claim is bright-yak's, not first-hand oracle.",
       "match": { "exe": "qbittorrent.exe", "name_contains": "qbittorrent" },
       "profile": { "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "qBittorrent (Qt Widgets UI, no D3D surface → dxvk default inert, no wrapper). Installed exe is x86_64 on modern builds (per bright-yak); 32-bit x86 is also build-supported (box64 BOX32 built-in + new-WoW64, box86 not needed — eager-wren t-f4fb5f), so no arch gate either way. Deps-justification: Qt/no import gaps flagged by gate. On-device unverified (arm64 HW pending)." }
+    },
+
+    {
+      "_note": "--- L1 FEEDER batch-3: brave-moth/bright-yak PE-facts → merry-moth first-hand pe_oracle.py + Get-FileHash (byte-match) → quiet-yak VERIFY-GATE GREEN (14:20/14:21) → applied. The .NET-flavor split (Framework/mono vs modern-self-contained vs modern-framework-dependent) is the theme. ---",
+      "_note2": "ShareX: REAL mscoree import (not substring) = .NET FRAMEWORK 4.x + WinForms (mono-solid, unlike WPF) → wine-mono runs it. 32-bit x86 (sha pins the 32-bit build; name_contains covers the 64-bit build too, both .NET-Fwk). Build-level 32-bit supported (t-f4fb5f); on-device confirm pending (Greenshot Q6).",
+      "match": { "exe": "sharex.exe", "name_contains": "sharex", "sha256": "54615ffcbefb2bc1675c84b734713eb2d572735fab7c1223c898be29e6429b41" },
+      "profile": { "wineComponents": ["mono"], "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "ShareX screen-capture (32-bit x86 build pinned; dual-build app). Oracle: REAL mscoree import → .NET FRAMEWORK 4.x, WinForms UI → wine-mono 10.1 implements it (WinForms is mono-solid, contrast WPF). NO DX (dxvk default inert). Deps-justification: mscoree=Framework→mono is the correct lever (NOT a substring false-pos — actually imported). 32-bit x86 build-supported (box64 BOX32 + new-WoW64, t-f4fb5f); on-device confirm pending (Greenshot Q6 is the class-wide 32-bit confirmation)." }
+    },
+    {
+      "_note": "PaintDotNet MODERN .NET but SELF-CONTAINED (C7 = just-runs): net9.0 runtimeconfig uses 'includedFrameworks' AND ships bundled coreclr.dll+hostfxr+hostpolicy+clrjit (300 DLLs in the full install) → carries its own CoreCLR, needs NO runtime provisioning and NO mono. Verified first-hand (coreclr.dll present + runtimeconfig includedFrameworks net9.0). Pin the real binary paintdotnet.exe, NOT the 107KB apphost stub. The decisive splitter vs HandBrake is runtimeconfig includedFrameworks(self-contained) vs framework(framework-dependent) — zero static imports can't tell them apart.",
+      "match": { "exe": "paintdotnet.exe", "name_contains": "paint.net" },
+      "profile": { "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "Paint.NET (x86_64, modern .NET net9.0). SELF-CONTAINED: bundles its own CoreCLR (coreclr/hostfxr/hostpolicy/clrjit + 300 DLLs) via runtimeconfig 'includedFrameworks' → runs without any .NET Desktop Runtime provisioning, NOT a mono case (mono is Framework-only; wine-mono would not help and is not needed). Real imports vcruntime140/_1 only (builtin). Deps-justification: self-contained modern-.NET = no external runtime dep. NO sha256 pin: the only hash I measured first-hand is the 107KB apphost stub, NOT the real launched binary (pdn_full/paintdotnet.exe, unhashed) — a stub-hash mislabeled as the binary would be a half-right pin, so name-match only until the real binary is hashed. Verdict (self-contained→runnable) is build-wide regardless. On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "_note": "HandBrake MODERN .NET but FRAMEWORK-DEPENDENT (C8 = needs provisioning): net8.0 runtimeconfig uses 'framework' (singular, Microsoft.WindowsDesktop.App 8.0.0) with NO bundled coreclr → needs the real .NET 8 Desktop Runtime in-prefix, which wine-mono does NOT provide. mscoree in the binary is a SUBSTRING FALSE-POSITIVE (0 real imports), so tagging [mono] would be a false-GREEN — the exact ScreenToGif-class trap. UNBLOCKS when bold-lynx's .NET Desktop Runtime provisioning (dotnetdesktop8 verb, t-3f7148) lands.",
+      "match": { "exe": "handbrake.exe", "name_contains": "handbrake", "sha256": "d346e161f2cbaccccae0a2861c4e9baf888d6aa1bfcfba4ba6ded922a65f8c75" },
+      "profile": { "box64Preset": "INTERMEDIATE", "rating": "unknown", "notes": "HandBrake video transcoder (x86_64, modern .NET net8.0). FRAMEWORK-DEPENDENT (runtimeconfig 'framework' singular = Microsoft.WindowsDesktop.App 8.0.0, no bundled coreclr) → needs the .NET 8 Desktop Runtime provisioned in-prefix; wine-mono does NOT implement CoreCLR so it will NOT launch under mono. Do NOT set wineComponents=[mono] (mscoree is a substring false-positive, not a real import — ScreenToGif-class trap). Deps-justification: modern .NET fwk-dep, unsupported until .NET Desktop Runtime provisioning lands (bold-lynx t-3f7148 / dotnetdesktop8 verb). Rated unknown (not broken) — flips to runnable when provisioning ships." }
     }
   ]
 }
