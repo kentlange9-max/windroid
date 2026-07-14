@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 4,
   "updated": "2026-07-14",
   "_comment": "WinDroid compatibility database (seed). Data, not code: add an app by adding an entry here. 'match' identifies the app (exe filename, optional size/sha256, name substring, or steam app id); 'profile' is the known-good configuration. Empty/omitted profile fields inherit the container default. Ratings: playable | runnable | ingame | blocked-anticheat | broken | unknown.",
 
@@ -280,8 +280,27 @@
       "profile": { "wineComponents": ["mono"], "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "Screenshot tool; imports mscoree.dll = .NET FRAMEWORK -> wine-mono 10.1.0 implements it (VERIFY-B JUST-RUNS*). Contrast screentogif (modern .NET, broken). On-device unverified (arm64 HW pending)." }
     },
     {
+      "_note": "ScreenToGif: sha256-PINNED exact build (keen-wren oracle, byte-identical to CompatEngine.sha256, VERIFY-A proven). This activates G1's SCORE_SHA256 tier in production (was data-inert). The pinned release is modern .NET framework-dependent → broken; a DIFFERENT (self-contained) build has a different hash → falls through to the name-match row below.",
+      "match": { "exe": "screentogif.exe", "sha256": "e30409df0dfe8722bd906095bcb693356f25b83680a860658b12a01057dfa5d8" },
+      "profile": { "rating": "broken", "notes": "EXACT build (oracle-verified): MODERN .NET, FRAMEWORK-DEPENDENT single-file WPF (in-exe hostfxr/.NETCoreApp/PresentationCore, NO bundled coreclr) → needs the real .NET Desktop Runtime, which wine-mono does NOT provide → will not launch. NOT a .NET-Framework/mono case. Revisit if merry-crane's .NET-unlock lands a Desktop-Runtime provisioning path." }
+    },
+    {
       "match": { "exe": "screentogif.exe", "name_contains": "screentogif" },
-      "profile": { "rating": "broken", "notes": "MODERN .NET (Core/5+; imports hostfxr/hostpolicy, NO mscoree) → bundled wine-mono does NOT implement it; needs the real .NET Desktop Runtime (unsupported under Wine-Mono). WPF-on-Wine adds further risk. Not runnable as-is; not a .NET-Framework/mono case. (PE parsed by witty-hawk L2.)" }
+      "profile": { "rating": "unknown", "notes": "Name-match fallback (broad). ScreenToGif is modern .NET (Core/5+): a FRAMEWORK-DEPENDENT build needs the .NET Desktop Runtime (unsupported by wine-mono → broken); a SELF-CONTAINED build (bundles coreclr) would just-run (runnable). The verified fwdep-modern release is pinned by sha256 above (broken); other/unknown builds land here as 'unknown' rather than being flat-condemned. Do NOT set wineComponents=[mono] — modern .NET, mono won't help." }
+    },
+
+    {
+      "_note": "--- L1 BATTERY-2: eager-wren VERIFY-B (keen-wren oracle-grounded imports, normal+delay) ---",
+      "match": { "exe": "everything.exe", "name_contains": "everything" },
+      "profile": { "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "voidtools Everything file-search; 10 imports all wine-builtin, pure Win32/GDI, 0 DX. The mscoree in the binary is a SUBSTRING false-pos — real import table has none, so NOT .NET (no mono). dxvk default inert (no D3D). On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "match": { "exe": "snes9x.exe", "name_contains": "snes9x" },
+      "profile": { "dxwrapper": "dxvk", "box64Preset": "INTERMEDIATE", "rating": "runnable", "notes": "SNES emulator; oracle-confirmed REAL d3d9 + ddraw imports (dxgi is substring false-pos) → dxvk serves d3d9 (needs Vulkan on device; Adreno/S25 GPU=GO). First BATTERY-2 real-DX target. On-device unverified (arm64 HW pending)." }
+    },
+    {
+      "match": { "exe": "dependencies.exe", "name_contains": "dependencies" },
+      "profile": { "wineComponents": ["mono"], "box64Preset": "INTERMEDIATE", "rating": "unknown", "notes": "lucasg Dependencies (PE-import viewer); imports mscoree = .NET FRAMEWORK → wine-mono is the right lever, BUT it's a WPF app and wine-mono's WPF coverage is incomplete → may fail to render. Rated unknown pending on-device (arm64 HW). Same managed-app-qualifier class as screentogif/imageglass." }
     }
   ]
 }
